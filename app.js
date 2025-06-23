@@ -216,10 +216,29 @@ let state = {
     currentSection: 'dashboard'
 };
 
+function saveState() {
+    localStorage.setItem('newpayState', JSON.stringify(state));
+}
+
+function loadState() {
+    const saved = localStorage.getItem('newpayState');
+    if (saved) {
+        try {
+            state = JSON.parse(saved);
+        } catch (e) {
+            console.error('Error loading saved state', e);
+        }
+    }
+}
+
 // Inicialización de la aplicación
 document.addEventListener('DOMContentLoaded', function() {
-    // Generar datos iniciales aleatorios
-    generateInitialData();
+    loadState();
+    if (!state.products || state.products.length === 0) {
+        generateInitialData();
+    } else {
+        calculateFinancials();
+    }
     
     // Configurar navegación
     setupNavigation();
@@ -523,6 +542,7 @@ function updateUI() {
     updateBCGSection();
     updateStrategiesSection();
     updatePLSection();
+    saveState();
 }
 
 // Actualizar dashboard
